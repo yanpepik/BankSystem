@@ -4,37 +4,34 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class BankAccount {
-    private int amountOfMoney;
     private int accountNum;
     private List<Card> cards;
-
     private static int counter = 0;
 
-    public BankAccount(int amountOfMoney) {
+    public BankAccount() {
         counter++;
-        this.amountOfMoney = amountOfMoney;
         this.accountNum = counter;
         this.cards = new ArrayList<>();
-    }
-
-    public int getAmountOfMoney() {
-        return amountOfMoney;
     }
 
     public int getAccountNum(){
         return accountNum;
     }
 
-    public void writeOffMoney(int amount) {
-        this.amountOfMoney -= amount;
+    public void writeOffMoney(int cardNumb, int amount) {
+        Card card = getCard(cardNumb);
+        card.writeOffMoney(amount);
     }
 
-    public void putMoney(int amount){
-        this.amountOfMoney += amount;
+    public void putMoney(int cardNumb, int amount) {
+        Card card = getCard(cardNumb);
+        card.putMoney(amount);
     }
 
-    public void addCard(int cardNum){
-        cards.add(new Card(cardNum, this));
+    public int addCard() {
+        Card card = new Card(this, 0);
+        cards.add(card);
+        return card.getNumber();
     }
 
     public void blockAllCards(){
@@ -43,4 +40,24 @@ public class BankAccount {
         }
     }
 
+    public Card getCard(int cardNumb) {
+        Card card =  cards.stream().filter(x -> x.getNumber() == cardNumb).findFirst().orElse(null);
+
+        if (card != null) {
+            return card;
+        } else {
+            throw new IllegalArgumentException("Card is not found.");
+        }
+    }
+
+    public int getCardMoney(int cardNumb) {
+        return getCard(cardNumb).getAmountOfMoney();
+    }
+
+    @Override
+    public String toString() {
+        return "BankAccount{" +
+                "accountNum=" + accountNum +
+                '}';
+    }
 }
